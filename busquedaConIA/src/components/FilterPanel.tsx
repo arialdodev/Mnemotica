@@ -50,6 +50,27 @@ const FilterPanel = () => {
     });
   };
 
+  const maxWords = 30;
+
+  const handleChange = (e) => {
+    const text = e.target.value;
+
+    // Separa las palabras ignorando espacios extra
+    const words = text.trim().split(/\s+/);
+
+    if (words.length <= maxWords) {
+      setSearchTerm(text);
+    } else {
+      // Limita el texto a las primeras 30 palabras
+      const limitedText = words.slice(0, maxWords).join(" ");
+      setSearchTerm(limitedText);
+    }
+  };
+
+  const wordCount =
+    searchTerm.trim() === "" ? 0 : searchTerm.trim().split(/\s+/).length;
+  const remainingWords = maxWords - wordCount;
+
   return (
     <div className="w-full lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-purple-200 p-4 lg:p-6 lg:h-full overflow-y-auto order-first lg:order-last">
       <div className="space-y-4 lg:space-y-6">
@@ -61,10 +82,15 @@ const FilterPanel = () => {
           <textarea
             placeholder="Buscar..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleChange}
             rows={3}
+            style={{ maxHeight: "400px" }}
             className="border border-purple-200 focus:border-purple-500 focus:ring-purple-500 w-full rounded-md px-3 py-2 text-sm resize-none resize-y"
           />
+          <div className="text-sm text-gray-600">
+            Te quedan {remainingWords >= 0 ? remainingWords : 0} palabra
+            {remainingWords === 1 ? "" : "s"}
+          </div>
         </div>
 
         {/* Selectores de fecha - en fila en móvil, en columna en desktop */}
