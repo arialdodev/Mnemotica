@@ -1,6 +1,6 @@
-import LeftSidebar from '@/components/LeftSidebar';
-import FilterPanel from '@/components/FilterPanel';
-import SearchResults from '@/components/SearchResults';
+import LeftSidebar from '@/components/LeftSidebar/LeftSidebar';
+import FilterPanel from '@/components/FilterPanel/FilterPanel';
+import SearchResults from '@/components/SearchResults/SearchResults';
 
 const Index = () => {
   return (

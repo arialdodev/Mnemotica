@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Plus } from 'lucide-react';
-import LeftSidebar from '@/components/LeftSidebar';
+import LeftSidebar from '@/components/LeftSidebar/LeftSidebar';
 
 interface FormData {
   id: number;
