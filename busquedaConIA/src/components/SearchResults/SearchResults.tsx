@@ -9,16 +9,23 @@ import {
 } from "@/components/ui/dialog";
 import { useLeccionConCoincidencia } from "../hooks/leccion-con-coincidencia/useLeccionConCoincidencia";
 import LoadingSkeleton from "../ui/loading-skeleton";
+import { useSearchParams } from "react-router-dom";
 
 const SearchResults = () => {
+  const [searchParams] = useSearchParams();
   const [selectedResultId, setSelectedResultId] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { isLoading, resultados, getLeccionConCoincidencia } =
+  const { isLoading, resultados, onGetLeccionConCoincidencia } =
     useLeccionConCoincidencia();
 
   useEffect(() => {
-    getLeccionConCoincidencia("aprendio utilizar");
-  }, []);
+    getLeccionConCoincidencia();
+  }, [searchParams]);
+
+  const getLeccionConCoincidencia = () => {
+    const Consulta = searchParams.get("Consulta");
+    onGetLeccionConCoincidencia(Consulta);
+  };
 
   const handleClick = (resultId: string) => {
     setSelectedResultId(resultId);

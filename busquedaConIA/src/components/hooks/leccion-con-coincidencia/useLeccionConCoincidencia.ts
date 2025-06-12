@@ -1,14 +1,11 @@
-import {
-  buscarLeccionesConCoincidencia,
-  LeccionConCoincidencia,
-} from "@/api/services/leccionesService";
+import { buscarLeccionesConCoincidencia } from "@/api/services/leccionesService";
 import { useState } from "react";
 
 export const useLeccionConCoincidencia = () => {
-  const [resultados, setResultados] = useState<LeccionConCoincidencia[]>([]);
+  const [resultados, setResultados] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const getLeccionConCoincidencia = async (Consulta: string) => {
+  const onGetLeccionConCoincidencia = async (Consulta: string) => {
     setIsLoading(true);
     try {
       const data = await buscarLeccionesConCoincidencia({ Consulta });
@@ -22,6 +19,6 @@ export const useLeccionConCoincidencia = () => {
   return {
     isLoading,
     resultados,
-    getLeccionConCoincidencia,
+    onGetLeccionConCoincidencia,
   };
 };

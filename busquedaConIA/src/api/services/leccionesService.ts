@@ -1,21 +1,9 @@
-export interface LeccionConCoincidencia {
-  leccion: {
-    id: string;
-    titulo: string;
-    descripcion: string;
-    embedding: number[];
-  };
-  porcentajeCoincidencia: number;
-}
-
 export interface ConsultaDto {
   Consulta: string;
 }
 
-// Método GET
-export const buscarLeccionesConCoincidencia = async (
-  datos: ConsultaDto
-): Promise<LeccionConCoincidencia[]> => {
+//Método POST
+export const buscarLeccionesConCoincidencia = async (datos: ConsultaDto) => {
   const url = `https://lecciones-aprendidas-func.azurewebsites.net/api/BuscarLecciones`;
 
   const response = await fetch(url, {
@@ -33,4 +21,3 @@ export const buscarLeccionesConCoincidencia = async (
 
   return response.json();
 };
-

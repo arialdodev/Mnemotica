@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
@@ -11,12 +12,24 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useForm } from "react-hook-form";
+import { useSearchParams } from "react-router-dom";
+import * as yup from "yup";
+
+const schema: yup.ObjectSchema<{ Consulta?: string }> = yup.object({
+  Consulta: yup.string().optional(),
+});
+
+type FormData = yup.InferType<typeof schema>;
 
 const FilterPanel = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
   const [selectedStates, setSelectedStates] = useState<string[]>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { watch, register, handleSubmit, setValue } = useForm<FormData>({
+    resolver: yupResolver(schema),
+  });
 
   const states = [
     "Activo",
@@ -35,41 +48,41 @@ const FilterPanel = () => {
   };
 
   const handleClear = () => {
-    setSearchTerm("");
+    setValue("Consulta", "");
     setStartDate(undefined);
     setEndDate(undefined);
     setSelectedStates([]);
   };
 
-  const handleSearch = () => {
-    console.log({
-      searchTerm,
-      startDate,
-      endDate,
-      selectedStates,
-    });
-  };
-
   const maxWords = 30;
 
-  const handleChange = (e) => {
-    const text = e.target.value;
+  const watchConsulta = watch("Consulta") || "";
+  const wordCount =
+    watchConsulta.trim() === "" ? 0 : watchConsulta.trim().split(/\s+/).length;
+  const remainingWords = maxWords - wordCount;
 
-    // Separa las palabras ignorando espacios extra
-    const words = text.trim().split(/\s+/);
+  useEffect(() => {
+    const Consulta = searchParams.get("Consulta");
 
-    if (words.length <= maxWords) {
-      setSearchTerm(text);
+    if (Consulta) {
+      setValue("Consulta", Consulta);
+    }
+  }, [searchParams]);
+
+  const onSubmit = (data: FormData) => {
+    let { Consulta } = data;
+
+    if (Consulta) {
+      const words = Consulta.trim().split(/\s+/);
+      if (words.length > maxWords) {
+        Consulta = words.slice(0, maxWords).join(" ");
+      }
+
+      setSearchParams({ Consulta });
     } else {
-      // Limita el texto a las primeras 30 palabras
-      const limitedText = words.slice(0, maxWords).join(" ");
-      setSearchTerm(limitedText);
+      setSearchParams({});
     }
   };
-
-  const wordCount =
-    searchTerm.trim() === "" ? 0 : searchTerm.trim().split(/\s+/).length;
-  const remainingWords = maxWords - wordCount;
 
   return (
     <div className="w-full lg:w-80 bg-white border-t lg:border-t-0 lg:border-l border-purple-200 p-4 lg:p-6 lg:h-full overflow-y-auto order-first lg:order-last">
@@ -80,9 +93,10 @@ const FilterPanel = () => {
             Búsqueda
           </label>
           <textarea
+            {...register("Consulta")}
+            name="Consulta"
             placeholder="Buscar..."
-            value={searchTerm}
-            onChange={handleChange}
+            onChange={(e) => setValue("Consulta", e.target.value)}
             rows={3}
             style={{ maxHeight: "400px" }}
             className="border border-purple-200 focus:border-purple-500 focus:ring-purple-500 w-full rounded-md px-3 py-2 text-sm resize-none resize-y"
@@ -196,7 +210,7 @@ const FilterPanel = () => {
             Limpiar
           </Button>
           <Button
-            onClick={handleSearch}
+            onClick={handleSubmit(onSubmit)}
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
           >
             Buscar
