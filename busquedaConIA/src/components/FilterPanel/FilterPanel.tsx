@@ -96,14 +96,29 @@ const FilterPanel = () => {
             {...register("Consulta")}
             name="Consulta"
             placeholder="Buscar..."
-            onChange={(e) => setValue("Consulta", e.target.value)}
+            value={watchConsulta}
+            onChange={(e) => {
+              const input = e.target.value;
+              const words = input.trim().split(/\s+/);
+              if (words.length <= maxWords) {
+                setValue("Consulta", input);
+              }
+            }}
             rows={3}
             style={{ maxHeight: "400px" }}
             className="border border-purple-200 focus:border-purple-500 focus:ring-purple-500 w-full rounded-md px-3 py-2 text-sm resize-none resize-y"
           />
           <div className="text-sm text-gray-600">
-            Te quedan {remainingWords >= 0 ? remainingWords : 0} palabra
-            {remainingWords === 1 ? "" : "s"}
+            {remainingWords > 0 ? (
+              <>
+                Te quedan {remainingWords} palabra
+                {remainingWords === 1 ? "" : "s"}
+              </>
+            ) : (
+              <span className="text-red-600">
+                Has alcanzado el límite de 30 palabras
+              </span>
+            )}
           </div>
         </div>
 
